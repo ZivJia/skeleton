@@ -44,7 +44,7 @@ public class TagsDao {
 
 
     }
-    public List<ReceiptsRecord> getAllReceiptsFromTag(String tag) {
+    public List<ReceiptsRecord> getAllReceipts(String tag) {
 
         return dsl.selectFrom(RECEIPTS).where(RECEIPTS.ID.in(dsl.
                 select(TAG.ID).from(TAG).where(TAG.TAG_.eq(tag)).fetch())).fetch();
