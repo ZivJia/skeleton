@@ -28,11 +28,7 @@ public class CreateReceiptRequestTest {
     public void testMissingAmount() {
         CreateReceiptRequest receipt = new CreateReceiptRequest();
         receipt.merchant = "OK";
-<<<<<<< HEAD
-=======
 
->>>>>>> b07c2f917ba21e931340a595ba355e5ac0b57f81
-        //receipt.amount = new BigDecimal(33.44);
         assertThat(validator.validate(receipt), empty());
     }
 
@@ -44,7 +40,6 @@ public class CreateReceiptRequestTest {
         validator.validate(receipt);
         assertThat(validator.validate(receipt), hasSize(1));
     }
-<<<<<<< HEAD
 
 
     @Test
@@ -52,6 +47,5 @@ public class CreateReceiptRequestTest {
         String tag = " ";
         assertThat(validator.validate(tag),hasSize(0));
     }
-=======
->>>>>>> b07c2f917ba21e931340a595ba355e5ac0b57f81
+
 }
