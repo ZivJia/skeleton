@@ -5,7 +5,9 @@ package generated;
 
 
 import generated.tables.Receipts;
+
 import generated.tables.Tag;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +33,9 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Public extends SchemaImpl {
 
+
 	private static final long serialVersionUID = 1966959472;
+
 
 	/**
 	 * The reference instance of <code>public</code>
@@ -68,5 +72,6 @@ public class Public extends SchemaImpl {
 		return Arrays.<Table<?>>asList(
 			Receipts.RECEIPTS,
 			Tag.TAG);
+			Receipts.RECEIPTS);
 	}
 }

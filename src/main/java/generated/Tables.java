@@ -7,6 +7,7 @@ package generated;
 import generated.tables.Receipts;
 import generated.tables.Tag;
 
+
 import javax.annotation.Generated;
 
 
@@ -32,4 +33,5 @@ public class Tables {
 	 * The table public.tag
 	 */
 	public static final Tag TAG = generated.tables.Tag.TAG;
+
 }

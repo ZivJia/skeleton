@@ -1,5 +1,7 @@
 package dao;
 
+
+
 import generated.tables.records.ReceiptsRecord;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
@@ -34,4 +36,3 @@ public class ReceiptDao {
         return dsl.selectFrom(RECEIPTS).fetch();
     }
 }
-

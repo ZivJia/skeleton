@@ -11,6 +11,5 @@ CREATE TABLE receipts (
 create table tag(
  id int,
  tag VARCHAR(255)
+);
 
-
-)
