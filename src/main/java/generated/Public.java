@@ -72,6 +72,5 @@ public class Public extends SchemaImpl {
 		return Arrays.<Table<?>>asList(
 			Receipts.RECEIPTS,
 			Tag.TAG);
-			Receipts.RECEIPTS);
 	}
 }
