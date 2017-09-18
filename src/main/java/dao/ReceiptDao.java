@@ -35,4 +35,5 @@ public class ReceiptDao {
     public List<ReceiptsRecord> getAllReceipts() {
         return dsl.selectFrom(RECEIPTS).fetch();
     }
+
 }

@@ -2,43 +2,56 @@
 <html>
 
 <head>
-    <link rel="stylesheet" href="style.css" />
-    <script data-require="jquery@*" data-semver="3.1.1" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script data-require="jquery@*" data-semver="3.1.1"
+            src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.7.0/sweetalert2.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.7.0/sweetalert2.min.js"></script>
     <style>
-        #container {border: 1px solid brown;}
-        H1 {float: left;}
-
-        .button{
-            background-color:#55A;
-            border: 1px solid #229;
-            width: 100px;
-            float: right;
-            font-size: 2em;
-            color: white;
-            text-align: center;
+        #container {
+            border: 1px dashed darkgray;
         }
 
-        #receiptList {
-            border: 1px solid green;
+        .btn-add {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        #receiptMap {
+            text-align: center;
+            border: 2px solid black;
             clear: both;
         }
 
-        .receipt {
-            background-color: #eee;
-            margin-bottom: 5px;
+        .tag-input {
+            background-color: floralwhite;
+            text-align: center;
+            color: black;
+            margin-top: 10px;
+            margin-bottom: 10px;
         }
+
+        .add-tag {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
 
     </style>
     <script>
         // This is the idiomatic way to ensure that JQuery does not
         // execute until the page has loaded
-        $(function(){
+        $(function () {
             const api = ""; // <- do not need a root api URL if this page is served directly by the API
 
-            $.getJSON(api+"/receipts", function(receipts){
-                for(var i=0; i < receipts.length; i++) {
+            $.getJSON(api + "/receipts", function (receipts) {
+                for (var i = 0; i < receipts.length; i++) {
                     var receipt = receipts[i];
-                    $(`<div class="receipt">${receipt.merchantName}<div><span class="receiptTag">t1</span></div></div>`)
+                    $('<div class="receipt">${receipt.merchantName}<div><span class="receiptTag">t1</span></div></div>')
                         .appendTo($("#receiptList"));
                 }
 
@@ -48,12 +61,178 @@
 </head>
 
 <body>
-<DIV id="container">
-    <h1>My receipts</h1>
-    <div class="button">+</div>
-    <div id="receiptList">
+<DIV id="container" class="col-xs-10 col-xs-offset-1 col-lg-6 col-lg-offset-3 col-md-8 col-md-offset-2 container">
+    <h1 class="col-sm-8">RECEIPTS</h1>
+    <a id="add-receipt" class="btn btn-success btn-lg btn-add col-md-4" data-toggle="modal"
+       data-target="#addReceiptModal">Add
+        Receipt</a>
+    <div id="receiptMap">
+        <div class="receiptNum row">
+            <div class="col-xs-3 receiptTl">Time</div>
+            <div class="col-xs-3 receiptTl">Merchant</div>
+            <div class="col-xs-3 receiptTl">Dollar</div>
+            <div class="col-xs-3 receiptTl">Tags</div>
+        </div>
     </div>
 </DIV>
+<div class="modal fade" id="addReceiptModal" tabindex="-1" role="dialog" aria-labelledby="addReceiptModalLabel"
+     aria-hidden="true ">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="ADD RECEIPT">New message</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="merchant" class="form-control-label">Merchant:</label>
+                        <input type="text" class="form-control" id="merchant">
+                    </div>
+                    <div class="form-group">
+                        <label for="amount" class="form-control-label">Amount:</label>
+                        <input type="text" class="form-control" id="amount"></input>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-receipt" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button id="save-receipt" type="button" class="btn btn-primary">Save receipt</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    const api = "";
+    $('#save-receipt').click(function () {
+        merchant = $('#merchant').val();
+        amount = $('#amount').val();
+        if (merchant == '') {
+            swal(
+                'Please enter merchant name'
+            );
+            return
+        }
+        amount = parseFloat(amount);
+        data = {
+            "merchant": merchant,
+            "amount": amount
+        };
+        $.ajax({
+            type: "POST",
+            url: api + "/receipts",
+            Accept: "application/json",
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function () {
+                getReceipts();
+                $('#cancel-receipt').click();
+                $('#merchant').val("");
+                $('#amount').val("");
+            },
+            error: function () {
+                $('#cancel-receipt').click();
+                swal(
+                    'Error',
+                    'Try Later'
+                );
+            }
+        });
+    })
+
+    $('#cancel-receipt').click(function () {
+        $('#merchant').val("");
+        $('#amount').val("");
+    })
+
+
+    function getReceipts() {
+        $.getJSON(api + "/receipts", function (receipts) {
+                $('#receiptMap').empty();
+                $('#receiptMap').append('<div class="receiptNum row">\n' +
+                    '<div class="col-xs-3 receiptTl">Time</div>\n' +
+                    '<div class="col-xs-3 receiptTl">Merchant</div>\n' +
+                    '<div class="col-xs-3 receiptTl">Dollar</div>\n' +
+                    '<div class="col-xs-3 receiptTl">Tags</div>\n' +
+                    '</div>');
+                for (var i = 0; i < receipts.length; i++) {
+                    var receipt = receipts[i]
+                    $('#receiptMap').append('<div class="receipt row">\n' +
+                        '<div class="col-xs-3 receiptTl">' + receipt.created + '</div>\n' +
+                        '<div class="col-xs-3 receiptTl merchant">' + receipt.merchantName + '</div>\n' +
+                        '<div class="col-xs-3 receiptTl amount">' + receipt.value + '</div>\n' +
+                        '<div class="col-xs-3 receiptTl tags" receipt-id="' + receipt.id + '">' +
+                        '<input  type="text" class="tag-input col-xs-11 col-cs-offset-3" receipt-id="' + receipt.id + '">\n' +
+                        '<button type="button" class="btn btn-info col-xs-11 col-cs-offset-3 add-tag" receipt-id="' + receipt.id + '">Add Tag</button><br>\n' +
+                        '</div>\n' +
+                        '</div>');
+                }
+                getTags();
+            }
+        )
+    }
+
+    $(function () {
+            getReceipts()
+        }
+    )
+
+    $('#receiptMap').on("click", ".add-tag", function (){
+        Value = $(this).prev().val();
+        parent = $(this).parent();                                //how to get this. siblings   .tag-input should be replaced by this
+        inputbox =$(this).prev();
+        $.ajax({
+            type: "PUT",
+            url: api + '/tags/' + Value,
+            contentType: "application/json",
+            data: $(this).attr('receipt-id'),
+            success: function () {
+                $('<a class="tag btn btn-primary col-xs-10 tagValue">' + Value + '</a><br>').appendTo(parent);
+                inputbox.val("");
+            },
+            error: function () {
+                swal(
+                    "Maybe Try again"
+                );
+            }
+        });
+    });
+
+    $('#receiptMap').on("click", ".tag", function () {
+        tagValue = $(this).text();
+        id = $(this).parent().attr('receipt-id');
+        $.ajax({
+            type: "PUT",
+            url: api + '/tags/' + tagValue,
+            contentType: "application/json",
+            data: id,
+            success: function () {
+                getReceipts();
+            },
+            error: function () {
+                swal(
+                    "Maybe Try Again 0.0"
+                );
+            }
+        });
+    });
+
+    function getTags() {
+        $.getJSON(api + "/gettags", function (tags) {
+            for (var i = 0; i < tags.length; i++) {
+                var tag = tags[i];
+                $(".tags[receipt-id=" + tag.id + "]").append('<a class="tag btn btn-primary col-xs-10 tagValue">' + tag.tagName + '</a><br>');
+            }
+        })
+    }
+
+</script>
+
+
 </body>
 
 </html>

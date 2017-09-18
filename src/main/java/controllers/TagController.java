@@ -1,12 +1,11 @@
 package controllers;
 
 import api.ReceiptResponse;
+import api.TagResponse;
 import dao.TagsDao;
 import generated.tables.records.ReceiptsRecord;
 import generated.tables.records.TagRecord;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
@@ -25,17 +24,22 @@ public class TagController {
 
     @PUT
     @Path("/tags/{tag}")
-    public String toggleTag(@PathParam("tag") String tagName, int id) {
-       return tags.insert(tagName, id);
+    public void toggleTag(String body, @PathParam("tag") String tagName) {
+        tags.insert(Integer.parseInt(body), tagName);
         // <your code here
     }
     @GET
     @Path("/tags/{tag}")
     public List<ReceiptResponse> getReceipts(@PathParam("tag") String tag) {
-        List<ReceiptsRecord> receiptRecords = tags.getAllReceipts(tag);
+        List<ReceiptsRecord> receiptRecords = tags.getReceipts(tag);
         return receiptRecords.stream().map(ReceiptResponse::new).collect(toList());
     }
-
+    @GET
+    @Path("/gettags")
+    public List<TagResponse> getTags() {
+        List<TagRecord> TagRecords = tags.getAllTags();
+        return TagRecords.stream().map(TagResponse::new).collect(toList());
+    }
 }
 
 

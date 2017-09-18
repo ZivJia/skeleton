@@ -22,7 +22,7 @@ public class TagsDao {
         this.dsl = DSL.using(jooqConfig);
     }
 
-    public String insert(String tag, int id) {
+    public String insert(int id, String tag) {
 
         ReceiptsRecord receiptsRecord = dsl.selectFrom(RECEIPTS).where(RECEIPTS.ID.eq(id)).fetchOne();
 
@@ -37,17 +37,20 @@ public class TagsDao {
                 return "insert successfully";
             }else{
                 //delete
-                dsl.deleteFrom(TAG).where(TAG.ID.eq(id)).execute();
-                return "delete successfully";
+                dsl.deleteFrom(TAG).where(TAG.ID.eq(id).and(TAG.TAG_.eq(tag))).execute();
+                return "delete";
             }
         }
 
-
     }
-    public List<ReceiptsRecord> getAllReceipts(String tag) {
+    public List<ReceiptsRecord> getReceipts(String tag) {
 
         return dsl.selectFrom(RECEIPTS).where(RECEIPTS.ID.in(dsl.
                 select(TAG.ID).from(TAG).where(TAG.TAG_.eq(tag)).fetch())).fetch();
+    }
+
+    public List<TagRecord> getAllTags() {
+        return dsl.selectFrom(TAG).fetch();
     }
 }
 
